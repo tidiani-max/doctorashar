@@ -1,0 +1,105 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Doctor Ashar | Future Health Tech - Explore Courses
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     background: linear-gradient(135deg, #1f1f1f, #121212);
+   }
+   .neon-text {
+     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+   }
+   .neon-border {
+     border: 2px solid;
+     border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+   }
+  </style>
+ </head>
+
+ <body class="font-roboto text-white">
+
+  <!-- Courses Section -->
+  <section class="py-16" id="courses">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Explore Our Courses</h2>
+  
+      <!-- Filter Form -->
+       <!-- Filter Form -->
+      <form method="get" class="mb-8">
+        <button type="submit" name="show_all" value="1" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded neon-border hover:bg-blue-700 transition">
+          Show All Courses
+        </button>
+      </form>
+      <!-- Explanation if limited -->
+      {% if not showing_all %}
+        <p class="text-gray-400 mb-4">Showing the 10 most recent courses. Use the filter above or click "Show All Courses" to see everything.</p>
+      {% endif %}
+      <!-- Courses Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for course in courses %}
+        <div class="bg-gray-800 p-4 rounded neon-border">
+          <img src="{{ course.thumbnail.url }}" alt="{{ course.title }} thumbnail" class="mb-4 rounded" height="200" width="300">
+          
+          <h3 class="text-xl font-bold mb-2">{{ course.title }}</h3>
+          <p class="mb-4">{{ course.description|truncatewords:20 }}</p>
+      
+          <p class="text-lg font-bold mb-4">
+            {% if course.price == 0 %}
+              Free
+            {% else %}
+              ${{ course.price }}
+            {% endif %}
+          </p>
+      
+          {% if course.id in purchased_courses %}
+            <button class="bg-gray-500 text-white font-bold py-2 px-4 rounded neon-border cursor-not-allowed" disabled>
+              Already Enrolled
+            </button>
+          {% else %}
+            <a href="{% url 'course_detail' course.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border">
+              Enroll
+            </a>
+          {% endif %}
+        </div>
+        {% empty %}
+        <p>No courses available at the moment.</p>
+        {% endfor %}
+      </div>
+      
+    </div>
+  </section>
+  
+
+  <!-- FAQ Section -->
+  <section class="py-16" id="faq">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Frequently Asked Questions</h2>
+
+      <div class="bg-gray-800 p-4 rounded neon-border mb-4">
+        <h3 class="text-xl font-bold mb-2">How does it work?</h3>
+        <p>Once you enroll in a course, you will have immediate access to all the course materials. You can learn at your own pace and revisit the content anytime.</p>
+      </div>
+
+      <div class="bg-gray-800 p-4 rounded neon-border mb-4">
+        <h3 class="text-xl font-bold mb-2">Refunds?</h3>
+        <p>We offer a 30-day money-back guarantee. If you are not satisfied with the course, you can request a full refund within 30 days of purchase.</p>
+      </div>
+
+      <div class="bg-gray-800 p-4 rounded neon-border mb-4">
+        <h3 class="text-xl font-bold mb-2">Access time?</h3>
+        <p>You will have lifetime access to the course materials. You can start and finish the course at your own pace.</p>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+
+ </html>

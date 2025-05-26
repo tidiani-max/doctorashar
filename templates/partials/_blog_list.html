@@ -1,0 +1,9 @@
+{% for blog in page_obj %}
+    <div class="blog">
+        <h3>{{ blog.title }}</h3>
+        <p>{{ blog.content|truncatechars:150 }}</p>
+        <a href="{% url 'blog_detail' blog.pk %}">Read more</a>
+    </div>
+{% empty %}
+    <p>No blog posts found.</p>
+{% endfor %}

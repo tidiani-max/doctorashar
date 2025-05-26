@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🌠 MysticEdu - Blog Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0e0f1f, #1c1c3b);
+            color: #e0e0f1;
+            padding: 2rem;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #9cd1ff;
+            text-shadow: 0 0 10px #6bf;
+        }
+
+        select {
+            background: #202042;
+            border: none;
+            padding: 0.5rem 1rem;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-shadow: 0 0 8px #3a3a75;
+            margin-bottom: 2rem;
+        }
+
+        #blogContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog {
+            background: #1a1a30;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 0 10px rgba(114, 158, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .blog:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(114, 158, 255, 0.5);
+        }
+
+        .blog h3 {
+            color: #8feeff;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog p {
+            color: #ccc;
+        }
+
+        .blog a {
+            color: #72c1ff;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        #loadMore {
+            margin: 3rem auto 1rem;
+            display: block;
+            background: linear-gradient(to right, #4e8df5, #63d0ff);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #111;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(114, 158, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #loadMore:hover {
+            background: linear-gradient(to right, #63d0ff, #4e8df5);
+            box-shadow: 0 0 20px rgba(114, 158, 255, 0.8);
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <h2>📚 Explore Knowledge by Category</h2>
+    <select id="categoryFilter">
+        <option value="">All</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+    </select>
+
+    <div id="blogContainer">
+        {% include 'partials/_blog_list.html' %}
+    </div>
+
+    <button id="loadMore" data-page="2">🚀 Load More</button>
+
+    <script>
+        let category = "";
+
+        $('#categoryFilter').change(function () {
+            category = $(this).val();
+            $.get("{% url 'blog_list' %}", { category: category }, function (data) {
+                $('#blogContainer').html(data);
+                $('#loadMore').data('page', 2);
+            });
+        });
+
+        $('#loadMore').click(function () {
+            const page = $(this).data('page');
+            $.get("{% url 'blog_list' %}", { page: page, category: category }, function (data) {
+                if (data.trim().length === 0) {
+                    $('#loadMore').hide();
+                } else {
+                    $('#blogContainer').append(data);
+                    $('#loadMore').data('page', page + 1);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

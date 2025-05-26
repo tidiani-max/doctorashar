@@ -1,0 +1,19 @@
+<h2 class="text-2xl font-bold mb-4">Register for {{ item.title }}</h2>
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="name" placeholder="Your Name" required class="mb-4 block w-full p-2 rounded">
+  <input type="email" name="email" placeholder="Your Email" required class="mb-4 block w-full p-2 rounded">
+
+  {% if item.price > 0 %}
+    <label class="block mb-2 font-semibold">Choose Payment Method</label>
+    <select name="payment_method" required class="mb-4 block w-full p-2 rounded">
+      {% for method in payment_methods %}
+        <option value="{{ method.id }}">{{ method.name }}</option>
+      {% endfor %}
+    </select>
+  {% endif %}
+
+  <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800">
+    {% if item.price > 0 %} Proceed to Pay {% else %} Register {% endif %}
+  </button>
+</form>

@@ -1,0 +1,391 @@
+{% load static %}
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Doctor Ashar | Future Health Tech
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <!-- Add Toastify CSS and JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     background: linear-gradient(135deg, #1f1f1f, #121212);
+   }
+   .neon-text {
+     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+   }
+   .neon-border relative {
+     border: 2px solid;
+     border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+   }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+
+  </style>
+  <script async src="https://www.tiktok.com/embed.js"></script>
+ </head>
+ <body class="font-roboto bg-black text-white">
+ 
+
+    <!-- Home Section -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 py-16 overflow-hidden bg-black" id="home">
+  
+      <!-- Navigation Bar -->
+      <nav class="w-full fixed top-0 left-0 z-50 bg-black bg-opacity-90 backdrop-blur-md border-b border-black shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-20">
+            <!-- Logo -->
+            <div class="flex items-center">
+              <a href="#home">
+                <img 
+                  class="h-16 w-16 rounded-full object-cover border-4 border-cyan-300 shadow-[0_0_15px_#0ff,0_0_25px_#0ff]" 
+                  src="{% static 'images/logo7.jpeg' %}" 
+                  alt="Logo"
+                >
+              </a>
+            </div>
+            
+  
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center space-x-6">
+              <a href="#home" class="text-cyan-300 hover:text-white text-sm font-medium">Home</a>
+              <a href="#content-hub" class="text-cyan-300 hover:text-white text-sm font-medium">Webinars</a>
+              <a href="#videos" class="text-cyan-300 hover:text-white text-sm font-medium">Videos</a>
+              <a href="#webinars" class="text-cyan-300 hover:text-white text-sm font-medium">Courses</a>
+  
+              {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                  <a href="{% url 'dashboard' %}" class="bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-3 py-1 rounded-md font-semibold shadow-md transition">Admin</a>
+                {% endif %}
+                <a href="{% url 'account_logout' %}" class="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded-md font-semibold shadow-md transition">Logout</a>
+              {% else %}
+                <a href="{% url 'signup' %}" class="bg-cyan-500 hover:bg-cyan-600 text-white text-sm px-3 py-1 rounded-md font-semibold shadow-md transition">Sign In</a>
+              {% endif %}
+            </div>
+  
+            <!-- Mobile Menu Toggle -->
+            <div class="md:hidden">
+              <button id="mobile-menu-toggle" class="text-cyan-300 focus:outline-none text-xl">
+                <i class="fas fa-bars"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-2">
+          <a href="#home" class="block text-cyan-300 hover:text-white text-base font-medium">Home</a>
+          <a href="#content-hub" class="block text-cyan-300 hover:text-white text-base font-medium">Webinars</a>
+          <a href="#videos" class="block text-cyan-300 hover:text-white text-base font-medium">Videos</a>
+          <a href="#webinars" class="block text-cyan-300 hover:text-white text-base font-medium">Course</a>
+  
+          {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+              <a href="{% url 'dashboard'%}" class="block bg-yellow-500 hover:bg-yellow-600 text-black text-sm px-3 py-1 rounded-md font-semibold shadow-md">Admin</a>
+            {% endif %}
+            <a href="{% url 'account_logout' %}" class="block bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded-md font-semibold shadow-md">Logout</a>
+          {% else %}
+            <a href="{% url 'signup' %}" class="block bg-cyan-500 hover:bg-cyan-600 text-white text-sm px-3 py-1 rounded-md font-semibold shadow-md">Sign In</a>
+          {% endif %}
+        </div>
+      </nav>
+  
+      <!-- Avatar with spacing below nav -->
+        <div class="mb-8 mt-16 flex justify-center">
+  <div class="w-56 h-56 rounded-full overflow-hidden border-4 border-cyan-300 shadow-[0_0_15px_#0ff,0_0_25px_#0ff] transition-transform hover:scale-105 duration-300">
+    <img 
+      alt="AI-style avatar with sunglasses" 
+      src="{% static 'images/avatar2.png' %}" 
+      class="w-full h-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+</div>
+
+      <!-- Title -->
+      <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight text-blue-500 dark:text-blue-400">
+        Doctor Ashar | Future Tech Through Metaphor
+      </h1>
+
+      <!-- Tagline -->
+      <p class="text-lg md:text-xl text-blue-400 dark:text-blue-300 italic mb-10 max-w-2xl">
+        "Decode the Future of AI & Innovation with Metaphor"
+      </p>
+
+
+      
+  
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap justify-center gap-4 mb-12">
+        <a href="{% url 'webinar' %}" class="bg-gradient-to-r from-cyan-400 to-cyan-600 hover:brightness-125 hover:scale-105 transform transition text-black font-semibold py-2 px-6 rounded-xl shadow-[0_0_10px_#0ff]">
+          Join Webinar
+        </a>
+        <a href="{% url 'videos' %}" class="bg-gradient-to-r from-sky-400 to-blue-600 hover:brightness-125 hover:scale-105 transform transition text-black font-semibold py-2 px-6 rounded-xl shadow-[0_0_10px_#0ff]">
+          Watch Video
+        </a>
+        <a href="{% url 'courses' %}" class="bg-gradient-to-r from-blue-400 to-indigo-600 hover:brightness-125 hover:scale-105 transform transition text-black font-semibold py-2 px-6 rounded-xl shadow-[0_0_10px_#0ff]">
+          Explore Course
+        </a>
+      </div>
+      
+  
+      <!-- Mission Statement -->
+      <div class="max-w-2xl text-center text-gray-300 leading-relaxed text-base md:text-lg px-2">
+        <p>
+          Our mission is to educate and inspire the next generation of healthcare professionals through cutting-edge technology, AI, and the Metaphors where medicine meets the future.
+        </p>
+      </div>
+  
+    </section>
+    <section class="py-16" id="content-hub">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-8 neon-text">Webinars</h2>
+    
+        <!-- Search & Filter -->
+        <div class="mb-8">
+          <form method="get" class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input name="q" value="{{ query }}" class="w-full p-2 rounded bg-gray-800 text-white" placeholder="Search webinar..." type="text"/>
+              <select name="category" class="w-full p-2 rounded bg-gray-800 text-white">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                  <option value="{{ cat.name }}" {% if selected_category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Apply Filter</button>
+          </form>
+        </div>
+    
+        <!-- Webinar Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {% for webinar in webinars %}
+          <div class="bg-gray-700 p-4 rounded neon-border relative">
+            {% if webinar.thumbnail %}
+              <img src="{{ webinar.thumbnail.url }}" alt="{{ webinar.title }}" class="mb-4 rounded" height="200" width="300"/>
+            {% endif %}
+            <h3 class="text-xl font-bold mb-2">{{ webinar.title }}</h3>
+            <p class="mb-4">{{ webinar.description|truncatechars:100 }}</p>
+           
+              {% if webinar.price == 0 %}
+                <span class="inline-block bg-green-600 text-white text-sm font-semibold px-3 py-1 rounded mb-4">Free</span>
+              {% else %}
+                <p class="text-lg font-bold text-white mb-4">IDR{{ webinar.price }}</p>
+              {% endif %}
+           
+            {% if webinar.id in paid_webinars %}
+              <a class="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded neon-border" href="{% url 'webinar_view' webinar.id %}">
+                View
+              </a>
+            {% else %}
+              <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border" href="{% url 'webinar_detail' webinar.id %}">
+               Register
+              </a>
+            {% endif %}
+            {% if user.is_staff %}
+            <a href="{% url 'edit_webinar' webinar_id=webinar.id %}" class="absolute top-2 right-2 bg-gradient-to-br from-cyan-400 to-blue-600 text-white px-4 py-1 rounded-full text-sm shadow hover:scale-105 transform transition">
+              ✨ Edit
+            </a>
+            {% endif %}
+          </div>
+          {% empty %}
+            <p class="text-white">No webinars  available right now.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    
+
+
+<!-- Videos Section -->
+<section class="py-16 bg-gray-800" id="videos">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-8 neon-text">Our Videos</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+      {% for video in videos %}
+      <div class="bg-gray-700 p-4 rounded neon-border relative">
+
+          {% if "youtube.com/watch?v=" in video.video_url %}
+  {% with video.video_url|cut:"https://www.youtube.com/watch?v=" as video_id %}
+    <iframe class="w-full rounded" height="200" src="https://www.youtube.com/embed/{{ video_id }}" title="{{ video.title }}" width="300" allowfullscreen></iframe>
+  {% endwith %}
+{% elif "youtu.be/" in video.video_url %}
+  {% with video.video_url|cut:"https://youtu.be/" as temp_id %}
+    {% with temp_id|slice:":11" as video_id %}
+      <iframe class="w-full rounded" height="200" src="https://www.youtube.com/embed/{{ video_id }}" title="{{ video.title }}" width="300" allowfullscreen></iframe>
+    {% endwith %}
+  {% endwith %}
+{% elif "tiktok.com" in video.video_url %}
+  <blockquote class="tiktok-embed" cite="{{ video.video_url }}" style="max-width: 100%; min-width: 200px;">
+    <section>Loading TikTok...</section>
+  </blockquote>
+  <script async src="https://www.tiktok.com/embed.js"></script>
+{% elif "instagram.com" in video.video_url %}
+  <blockquote class="instagram-media" data-instgrm-permalink="{{ video.video_url }}" data-instgrm-version="14" style="background:#FFF; border:0; margin: 1px; padding:0; width:100%;">
+  </blockquote>
+  <script async defer src="//www.instagram.com/embed.js"></script>
+{% else %}
+  <p class="text-white">Unsupported video format.</p>
+{% endif %}
+
+
+        <h3 class="text-xl font-bold mb-2 mt-4">{{ video.title }}</h3>
+        <p class="mb-4">{{ video.description|truncatechars:100 }}</p>
+
+        {% if user.is_staff %}
+        <a href="{% url 'edit_video' video_id=video.id %}" class="absolute top-2 right-2 bg-gradient-to-br from-cyan-400 to-blue-600 text-white px-4 py-1 rounded-full text-sm shadow hover:scale-105 transform transition">
+          ✨ Edit
+        </a>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p class="text-white">No videos found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- Webinars & Courses Section -->
+<section class="py-16 bg-gray-800" id="webinars">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-8 neon-text">Courses</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+      {% for course in courses %}
+      <div class="bg-gray-700 p-4 rounded neon-border relative">
+        {% if course.thumbnail %}
+          <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="mb-4 rounded" height="200" width="300"/>
+        {% endif %}
+        <h3 class="text-xl font-bold mb-2">{{ course.title }}</h3>
+        <p class="mb-4">{{ course.description|truncatechars:100 }}</p>
+        <p class="text-lg font-bold mb-4">
+          {% if course.price == 0 %}
+            Free
+          {% else %}
+            IDR{{ course.price }}
+          {% endif %}
+        </p>
+        {% if course.id in paid_courses %}
+          <a class="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded neon-border" href="{% url 'course_view' course.id %}">
+            View
+          </a>
+        {% else %}
+          <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border" href="{% url 'course_detail' course.id %}">
+            Buy Now
+          </a>
+        {% endif %}
+        {% if user.is_staff %}
+        <a href="{% url 'edit_course' course_id=course.id %}" class="absolute top-2 right-2 bg-gradient-to-br from-cyan-400 to-blue-600 text-white px-4 py-1 rounded-full text-sm shadow hover:scale-105 transform transition">
+          ✨ Edit
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Blog Posts Section -->
+<section class="py-16" id="blog">
+  <div class="container mx-auto px-4">
+    <!-- Pagination -->
+    {% if blogs.has_other_pages %}
+    <div class="mt-10 text-center">
+      {% if blogs.has_previous %}
+        <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ blogs.previous_page_number }}" class="px-4 py-2 bg-gray-600 text-white rounded">Previous</a>
+      {% endif %}
+      <span class="text-white mx-2">Page {{ blogs.number }} of {{ blogs.paginator.num_pages }}</span>
+      {% if blogs.has_next %}
+        <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ blogs.next_page_number }}" class="px-4 py-2 bg-gray-600 text-white rounded">Next</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+     
+       <!-- Support Us -->
+       <section class="py-16" id="support-us">
+       <div class="container mx-auto px-4">
+         <h2 class="text-3xl font-bold mb-8 neon-text">
+           Support Us
+         </h2>
+         <p class="mb-8">
+           Your donations help us continue our mission to educate and inspire the next generation of healthcare professionals. Thank you for your support!
+         </p>
+         <div class="mb-8 flex flex-wrap gap-4 justify-center">
+       <!-- Stripe -->
+       <a class="rounded-xl hover:scale-105 transition-transform w-24 h-24 neon-border relative overflow-hidden" href="#">
+         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS42uI2JPTWjq_uNG9UFt98jnpHODVQrQHysg&s" alt="Stripe Logo" class="w-full h-full object-contain">
+       </a>
+     
+       <!-- PayPal -->
+       <a class="rounded-xl hover:scale-105 transition-transform w-24 h-24 neon-border relative overflow-hidden" href="#">
+         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal Logo" class="w-full h-full object-contain">
+       </a>
+     
+       <!-- ShopeePay -->
+       <a class="rounded-xl hover:scale-105 transition-transform w-24 h-24 neon-border relative overflow-hidden" href="#">
+         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvSXS05PhtTaRg7GRru7TWZx2NegYbIi9hYw&s" alt="ShopeePay Logo" class="w-full h-full object-contain">
+       </a>
+     
+       <!-- OVO -->
+       <a class="rounded-xl hover:scale-105 transition-transform w-24 h-24 neon-border relative overflow-hidden" href="#">
+         <img src="https://i.pinimg.com/474x/9c/0a/ff/9c0affaaa53d71f6d20aa3a79a4d8d1f.jpg" alt="OVO Logo" class="w-full h-full object-contain">
+       </a>
+     </div>
+     
+     
+     
+         <div class="bg-gray-800 p-4 rounded neon-border relative">
+           <h3 class="text-xl font-bold mb-4">
+             Testimonials
+           </h3>
+           <p class="mb-4">
+             "This platform has been a game-changer for my medical education. The webinars and courses are top-notch!" - Medical Student
+           </p>
+           <p class="mb-4">
+             "As a tech enthusiast, I found the content on AI and the Metaverse incredibly insightful and forward-thinking." - Tech Enthusiast
+           </p>
+           <p class="mb-4">
+             "The support and resources provided here are invaluable for anyone looking to stay ahead in the healthcare field." - Young Doctor
+           </p>
+         </div>
+       </div>
+     </section>
+ </body>
+
+ <script>
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  mobileToggle.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        mobileMenu.classList.add('hidden');
+      }
+    });
+  });
+</script>
+
+
+
+</html>

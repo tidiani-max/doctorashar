@@ -1,0 +1,192 @@
+{% load static %}
+{% load socialaccount %}
+<html class="scroll-smooth" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Doctor Ashar | Future Health Tech - Auth
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&amp;family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #0a0a0a;
+      color: #e0e0e0;
+    }
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+    /* Neon glow effect */
+    .neon-text {
+      text-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7,
+        0 0 20px #00fff7,
+        0 0 40px #00fff7;
+    }
+    .neon-border {
+      border-color: #00fff7;
+      box-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7,
+        0 0 20px #00fff7;
+    }
+    .btn-neon {
+      background-color: #00fff7;
+      color: #0a0a0a;
+      box-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7,
+        0 0 20px #00fff7;
+      transition: all 0.3s ease;
+    }
+    .btn-neon:hover {
+      background-color: #00d9cc;
+      box-shadow:
+        0 0 10px #00d9cc,
+        0 0 20px #00d9cc,
+        0 0 40px #00d9cc;
+      color: #0a0a0a;
+    }
+    .btn-outline-neon {
+      border: 2px solid #00fff7;
+      color: #00fff7;
+      background-color: transparent;
+      box-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7;
+      transition: all 0.3s ease;
+    }
+    .btn-outline-neon:hover {
+      background-color: #00fff7;
+      color: #0a0a0a;
+      box-shadow:
+        0 0 15px #00fff7,
+        0 0 30px #00fff7;
+    }
+    .input-glow {
+      background-color: #121212;
+      border: 2px solid #222;
+      color: #e0e0e0;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-glow:focus {
+      outline: none;
+      border-color: #00fff7;
+      box-shadow:
+        0 0 8px #00fff7,
+        0 0 16px #00fff7;
+      background-color: #0f0f0f;
+      color: #e0e0e0;
+    }
+    /* Smooth fade in for card */
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+ </head>
+ <body class="min-h-screen flex items-center justify-center px-4 py-8">
+  <div class="fade-in max-w-md w-full bg-[#121212] rounded-3xl p-8 shadow-neon border-2 neon-border" id="auth-card">
+   <div class="flex flex-col items-center mb-8 select-none">
+    <img alt="Doctor Ashar logo, stylized letters D and A in neon cyan glowing style on black background" class="w-20 h-20 mb-4 rounded-full shadow-neon" height="80" loading="lazy" src="https://storage.googleapis.com/a1aa/image/51f0ce2c-1e1b-4e55-9054-b376a07a3f87.jpg" width="80"/>
+    <h1 class="text-3xl font-orbitron neon-text mb-1 text-center">
+     Doctor Ashar | Future Health Tech
+    </h1>
+    <p class="text-sm text-cyan-400 font-light tracking-wide text-center max-w-xs">
+     Decode the Future of Health &amp; Technology
+    </p>
+   </div>
+   <!-- Signin and Signup forms container -->
+   <div class="relative">
+    <!-- Sign In Form -->
+    <form method="POST" action="{% url 'account_login' %}" class="space-y-6" novalidate>
+      {% csrf_token %}
+      <h2 class="text-2xl font-orbitron neon-text mb-6 text-center">Sign In</h2>
+      <div>
+        <label class="block mb-2 text-cyan-400 font-semibold" for="login-email">Email</label>
+        <input class="input-glow w-full rounded-lg px-4 py-3" type="email" name="login" placeholder="you@example.com" required />
+      </div>
+      <div>
+        <label class="block mb-2 text-cyan-400 font-semibold" for="login-password">Password</label>
+        <input class="input-glow w-full rounded-lg px-4 py-3" type="password" name="password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn-neon w-full rounded-lg font-semibold text-lg tracking-wide">Sign In</button>
+     <div class="flex items-center my-4">
+      <hr class="flex-grow border-cyan-700"/>
+      <span class="mx-3 text-cyan-500 font-light text-sm select-none">
+       OR
+      </span>
+      <hr class="flex-grow border-cyan-700"/>
+     </div>
+     
+    
+     <div class="space-y-3">
+      <a href="{% provider_login_url 'google' process='login' %}&prompt=select_account" class="btn-outline-neon w-full flex items-center justify-center gap-3 rounded-lg font-semibold text-lg tracking-wide hover:scale-105 transform transition">
+        <button type="button" class="btn-outline-neon w-full flex items-center justify-center gap-3 rounded-lg font-semibold text-lg tracking-wide hover:scale-105 transform transition">
+          <img src="https://storage.googleapis.com/a1aa/image/55fea5d6-1b2e-4b9a-e0a6-61bf50b4fea5.jpg" alt="Google logo" class="w-6 h-6">
+          Sign Up with Google
+        </button>
+      </a>
+      
+      
+     </div>
+     <p class="mt-6 text-center text-cyan-400 font-light text-sm select-none">
+      don't have an account?
+      <a href="{% url 'signup' %}">
+        <button aria-label="Switch to Sign in page" class="text-[#00fff7] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded" id="switch-to-signin" type="button">
+          Sign up
+         </button>
+      </a>
+     </p>
+    </form>
+   </div>
+  </div>
+  <script>
+   const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+    const switchToSignupBtn = document.getElementById('switch-to-signup');
+    const switchToSigninBtn = document.getElementById('switch-to-signin');
+
+    function showSignin() {
+      signupForm.classList.add('hidden');
+      signinForm.classList.remove('hidden');
+      signinForm.querySelector('input').focus();
+    }
+
+    function showSignup() {
+      signinForm.classList.add('hidden');
+      signupForm.classList.remove('hidden');
+      signupForm.querySelector('input').focus();
+    }
+
+    switchToSignupBtn.addEventListener('click', () => {
+      showSignup();
+      window.history.replaceState(null, '', '#signup');
+    });
+
+    switchToSigninBtn.addEventListener('click', () => {
+      showSignin();
+      window.history.replaceState(null, '', '#signin');
+    });
+
+    // On page load, check hash to show correct form
+    window.addEventListener('load', () => {
+      if (window.location.hash === '#signup') {
+        showSignup();
+      } else {
+        showSignin();
+      }
+    });
+  </script>
+ </body>
+</html>

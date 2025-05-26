@@ -1,0 +1,506 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Doctor Ashar | Future Health Tech - Admin Dashboard
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     background: linear-gradient(135deg, #1f1f1f, #121212);
+   }
+   .neon-text {
+     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+   }
+   .neon-border {
+     border: 2px solid;
+     border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+   }
+   .sidebar {
+     width: 250px;
+     background: #1f1f1f;
+     height: 100vh;
+     position: fixed;
+     top: 0;
+     left: 0;
+     padding: 20px;
+     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+   }
+   .sidebar a {
+     display: block;
+     padding: 10px;
+     color: #fff;
+     text-decoration: none;
+     margin-bottom: 10px;
+     border-radius: 5px;
+     transition: background 0.3s;
+   }
+   .sidebar a:hover {
+     background: #333;
+   }
+   .content {
+     margin-left: 270px;
+     padding: 20px;
+   }
+  </style>
+ </head>
+ <body class="font-roboto text-white">
+  {% if messages %}
+  <div class="fixed inset-0 flex items-center justify-center z-50">
+    <div class="w-full max-w-md px-6">
+      {% for message in messages %}
+        {% if message.tags == "error" %}
+          <div class="p-4 rounded bg-red-600 text-white shadow-lg">
+            {{ message }}
+          </div>
+        {% elif message.tags == "success" %}
+          <div class="p-4 rounded bg-green-600 text-white shadow-lg">
+            {{ message }}
+          </div>
+        {% else %}
+          <div class="p-4 rounded bg-blue-600 text-white shadow-lg">
+            {{ message }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+   <h2 class="text-2xl font-bold neon-text mb-8">
+    Admin Dashboard
+   </h2>
+   <a href="{% url 'home' %}" class="flex items-center gap-2 px-4 py-2 mb-4 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-indigo-600 hover:to-purple-600 transition-all duration-300">
+    <i class="fas fa-home"></i>
+    Home
+  </a>
+
+   <a href="#overview">
+    <i class="fas fa-tachometer-alt">
+    </i>
+    Overview
+   </a>
+   <a href="#content-management">
+    <i class="fas fa-file-alt">
+    </i>
+    Content Management
+   </a>
+   <a href="#payments">
+    <i class="fas fa-dollar-sign">
+    </i>
+    Payments
+   </a>
+   <a href="#user-management">
+    <i class="fas fa-users">
+    </i>
+    User Management
+   </a>
+   <a href="#analytics">
+    <i class="fas fa-chart-line">
+    </i>
+    Analytics
+   </a>
+  </div>
+  <div class="content">
+    <section id="overview" class="mb-16">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Overview</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-gray-800 p-4 rounded neon-border">
+          <h3 class="text-xl font-bold mb-2">Total Videos</h3>
+          <p class="text-2xl">{{ videos.count }}</p>
+        </div>
+        <div class="bg-gray-800 p-4 rounded neon-border">
+          <h3 class="text-xl font-bold mb-2">Total Blogs</h3>
+          <p class="text-2xl">{{ blogs.count }}</p>
+        </div>
+        <div class="bg-gray-800 p-4 rounded neon-border">
+          <h3 class="text-xl font-bold mb-2">Total Courses</h3>
+          <p class="text-2xl">{{ courses.count }}</p>
+        </div>
+        <div class="bg-gray-800 p-4 rounded neon-border">
+          <h3 class="text-xl font-bold mb-2">Total Webinars</h3>
+          <p class="text-2xl">{{ webinars.count }}</p>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Content Management -->
+    <section id="content-management" class="mb-16">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Content Management</h2>
+  
+      <!-- Upload/Manage Videos -->
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">Upload/Manage Videos</h3>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="upload_video" value="1" />
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Video Title</label>
+            <input name="video_title" class="w-full p-2 rounded bg-gray-700 text-white" type="text" required />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Category</label>
+            <select name="video_category" class="w-full p-2 rounded bg-gray-700 text-white" required>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}" required >{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Video URL</label>
+            <input name="video_url" class="w-full p-2 rounded bg-gray-700 text-white" type="url" required />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Thumbnail Image</label>
+            <input name="video_thumbnail" class="w-full p-2 rounded bg-gray-700 text-white" type="file" required />
+          </div>
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border" type="submit">Upload Video</button>
+        </form>
+      </div>
+      <!-- Upload/Manage Courses -->
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">Upload/Manage Courses</h3>
+        <form method="POST" enctype="multipart/form-data" id="course-form">
+          {% csrf_token %}
+          <input type="hidden" name="upload_course" value="1" />
+      
+          <!-- Course Details -->
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Course Title</label>
+            <input name="course_title" class="w-full p-2 rounded bg-gray-700 text-white" type="text" required />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Description</label>
+            <textarea name="course_description" class="w-full p-2 rounded bg-gray-700 text-white" rows="4" required></textarea>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Price ($)</label>
+            <input name="course_price" class="w-full p-2 rounded bg-gray-700 text-white" type="number" step="0.01" required />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Upload Material (PDF)</label>
+            <input name="course_material" class="w-full p-2 rounded bg-gray-700 text-white" type="file" required />
+          </div>
+          <!-- Thumbnail -->
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Upload Thumbnail</label>
+            <input name="course_thumbnail" class="w-full p-2 rounded bg-gray-700 text-white" type="file" accept="image/*" />
+          </div>
+
+          <!-- Category Dropdown -->
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Category</label>
+            <select name="course_category" class="w-full p-2 rounded bg-gray-700 text-white" required>
+              <option value="">-- Select Category --</option>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+      
+          <!-- Chapters Section -->
+          <div id="chapters-section" class="mb-6">
+            <h4 class="text-lg font-semibold text-white mb-2">Chapters</h4>
+            <div class="chapter border border-cyan-600 p-4 rounded mb-4 bg-gray-900">
+              <label class="block text-sm font-bold mb-1">Chapter Title</label>
+              <input name="chapter_title[]" class="w-full p-2 rounded bg-gray-700 text-white mb-2" type="text" required />
+              
+              <label class="block text-sm font-bold mb-1">Chapter Content</label>
+              <textarea name="chapter_content[]" class="w-full p-2 rounded bg-gray-700 text-white mb-2" rows="3" required></textarea>
+      
+              <label class="block text-sm font-bold mb-1">Video URL</label>
+              <input name="chapter_video[]" class="w-full p-2 rounded bg-gray-700 text-white mb-2" type="url" />
+      
+              <div class="quiz-section bg-gray-800 p-3 rounded mt-4">
+                <h5 class="font-bold mb-2">Quiz</h5>
+                <input type="text" name="quiz_question[]" placeholder="Question" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input type="text" name="quiz_option_a[]" placeholder="Option A" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input type="text" name="quiz_option_b[]" placeholder="Option B" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input type="text" name="quiz_option_c[]" placeholder="Option C" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input type="text" name="quiz_option_d[]" placeholder="Option D" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <select name="quiz_correct[]" class="w-full p-2 rounded bg-gray-700 text-white">
+                  <option value="">Correct Answer</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="addChapter()" class="bg-cyan-500 text-white px-4 py-2 rounded mb-4">+ Add Chapter</button>
+      
+          <!-- Final Test Section -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold text-white mb-2">Final Test Questions</h4>
+            <div id="final-tests">
+              <div class="final-question bg-gray-900 p-4 rounded mb-4">
+                <input name="final_question[]" placeholder="Final Question" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input name="final_option_a[]" placeholder="Option A" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input name="final_option_b[]" placeholder="Option B" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input name="final_option_c[]" placeholder="Option C" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <input name="final_option_d[]" placeholder="Option D" class="w-full p-2 rounded bg-gray-700 text-white mb-2" required />
+                <select name="final_correct[]" class="w-full p-2 rounded bg-gray-700 text-white">
+                  <option value="">Correct Answer</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" onclick="addFinalQuestion()" class="bg-purple-600 text-white px-4 py-2 rounded">+ Add Final Test</button>
+          </div>
+      
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border" type="submit">Upload Course</button>
+        </form>
+      </div>
+      
+  
+      <!-- Upload/Manage Webinars -->
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">📺 Upload New Webinar</h3>
+        <form method="POST" enctype="multipart/form-data" id="webinar-form">
+          {% csrf_token %}
+          <input type="hidden" name="upload_webinar" value="1"/>
+      
+          <!-- Webinar Base Info -->
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Webinar Title</label>
+            <input name="webinar_title" class="w-full p-2 rounded bg-gray-700 text-white" required/>
+          </div>
+      
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Webinar Description</label>
+            <textarea name="webinar_description" class="w-full p-2 rounded bg-gray-700 text-white" rows="3" required></textarea>
+          </div>
+      
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Webinar Price ($)</label>
+            <input name="webinar_price" class="w-full p-2 rounded bg-gray-700 text-white" type="number" step="0.01" required/>
+          </div>
+      
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Webinar Date & Time</label>
+            <input name="webinar_date" class="w-full p-2 rounded bg-gray-700 text-white" type="datetime-local" required/>
+          </div>
+      
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Zoom Link</label>
+            <input name="webinar_link" class="w-full p-2 rounded bg-gray-700 text-white" type="url" required/>
+          </div>
+      
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-2">Thumbnail (Optional)</label>
+            <input name="webinar_thumbnail" class="w-full p-2 rounded bg-gray-700 text-white" type="file" accept="image/*"/>
+          </div>
+      
+          <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border">
+            Upload Webinar
+          </button>
+        </form>
+      </div>
+    </section>
+  
+  <section id="payments" class="mb-16">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Payments</h2>
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">Recent Transactions</h3>
+        <table class="w-full text-left">
+          <thead>
+            <tr>
+              <th class="py-2">Date</th>
+              <th class="py-2">Amount</th>
+              <th class="py-2">Type</th>
+              <th class="py-2">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in recent_payments %}
+            <tr>
+              <td class="py-2">{{ payment.date }}</td>
+              <td class="py-2">${{ payment.amount }}</td>
+              <td class="py-2">{{ payment.payment_type }}</td>
+              <td class="py-2">{{ payment.status }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="py-2 text-center">No recent transactions.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href="{% url 'download_csv' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border">
+        Download CSV Report
+      </a>
+    </section>
+  
+    <!-- User Management -->
+    <section id="user-management" class="mb-16">
+      <h2 class="text-3xl font-bold mb-8 neon-text">User Management</h2>
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">Registered Users</h3>
+        <table class="w-full text-left">
+          <thead>
+            <tr>
+              <th class="py-2">Name</th>
+              <th class="py-2">Email</th>
+              <th class="py-2">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td class="py-2">{{ user.get_full_name }}</td>
+              <td class="py-2">{{ user.email }}</td>
+              <td class="py-2">{{ user.role }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="py-2 text-center">No users found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  
+    <!-- Analytics Page -->
+    <section id="analytics" class="mb-16">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Analytics</h2>
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">User Engagement</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <canvas id="userEngagementChart"></canvas>
+          </div>
+          <div>
+            <canvas id="contentEngagementChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">Most Watched Videos</h3>
+        <ul>
+          {% for video in top_videos %}
+          <li class="mb-2"><span class="font-bold">{{ forloop.counter }}.</span> {{ video.title }} - {{ video.views }} views</li>
+          {% empty %}
+          <li>No videos available.</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="bg-gray-800 p-4 rounded neon-border mb-8">
+        <h3 class="text-xl font-bold mb-4">Most Read Blog Posts</h3>
+        <ul>
+          {% for post in top_blog_posts %}
+          <li class="mb-2"><span class="font-bold">{{ forloop.counter }}.</span> {{ post.title }} - {{ post.reads }} reads</li>
+          {% empty %}
+          <li>No blog posts available.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js">
+  </script>
+  <script>
+   // User Engagement Chart
+   const userEngagementCtx = document.getElementById('userEngagementChart').getContext('2d');
+   const userEngagementChart = new Chart(userEngagementCtx, {
+     type: 'line',
+     data: {
+       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+       datasets: [{
+         label: 'User Engagement',
+         data: [65, 59, 80, 81, 56, 55, 40],
+         backgroundColor: 'rgba(75, 192, 192, 0.2)',
+         borderColor: 'rgba(75, 192, 192, 1)',
+         borderWidth: 1
+       }]
+     },
+     options: {
+       scales: {
+         y: {
+           beginAtZero: true
+         }
+       }
+     }
+   });
+
+   // Content Engagement Chart
+   const contentEngagementCtx = document.getElementById('contentEngagementChart').getContext('2d');
+   const contentEngagementChart = new Chart(contentEngagementCtx, {
+     type: 'bar',
+     data: {
+       labels: ['Video 1', 'Video 2', 'Video 3', 'Blog 1', 'Blog 2', 'Blog 3'],
+       datasets: [{
+         label: 'Content Engagement',
+         data: [12, 19, 3, 5, 2, 3],
+         backgroundColor: 'rgba(153, 102, 255, 0.2)',
+         borderColor: 'rgba(153, 102, 255, 1)',
+         borderWidth: 1
+       }]
+     },
+     options: {
+       scales: {
+         y: {
+           beginAtZero: true
+         }
+       }
+     }
+   });
+  </script>
+  <script>
+    setTimeout(() => {
+      const alert = document.querySelector('.fixed.inset-0');
+      if (alert) alert.remove();
+    }, 3000); // 3 seconds
+  </script>
+  <script>
+    function addChapter() {
+      const container = document.getElementById("chapters-container");
+      const template = `
+        <div class="chapter-block bg-gray-700 p-4 rounded mt-4">
+          <div class="mb-2">
+            <label class="block text-sm font-bold">Chapter Title</label>
+            <input name="chapter_title[]" class="w-full p-2 rounded bg-gray-800 text-white" required/>
+          </div>
+          <div class="mb-2">
+            <label class="block text-sm font-bold">Chapter Content</label>
+            <textarea name="chapter_content[]" class="w-full p-2 rounded bg-gray-800 text-white" required></textarea>
+          </div>
+          <div class="mb-2">
+            <label class="block text-sm font-bold">Video URL</label>
+            <input name="chapter_video[]" class="w-full p-2 rounded bg-gray-800 text-white" type="url" required/>
+          </div>
+        </div>`;
+      container.insertAdjacentHTML('beforeend', template);
+    }
+    </script>
+    <script>
+      function addChapter() {
+        const section = document.getElementById('chapters-section');
+        const original = section.querySelector('.chapter');
+        const clone = original.cloneNode(true);
+        clone.querySelectorAll('input, textarea, select').forEach(input => input.value = '');
+        section.appendChild(clone);
+      }
+      
+      function addFinalQuestion() {
+        const container = document.getElementById('final-tests');
+        const original = container.querySelector('.final-question');
+        const clone = original.cloneNode(true);
+        clone.querySelectorAll('input, select').forEach(el => el.value = '');
+        container.appendChild(clone);
+      }
+      </script>
+    
+ </body>
+
+</html>

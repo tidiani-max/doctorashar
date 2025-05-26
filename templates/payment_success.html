@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Successful | Doctor Ashar | Future Health Tech</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Animate.css (optional for effects) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Fonts and Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f1f1f, #121212);
+    }
+    .neon-text {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff;
+    }
+    .neon-border {
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body class="font-roboto min-h-screen flex items-center justify-center px-4 py-16 text-white">
+
+  <div class="max-w-2xl w-full bg-gray-900 p-10 rounded-xl shadow-xl neon-border text-center space-y-8">
+
+    <!-- Animated Success Icon -->
+    <div class="flex justify-center mb-6">
+      <div class="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center floating shadow-lg">
+        <svg class="w-12 h-12 text-green-400 animate-ping-slow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Main Success Message -->
+    <h2 class="text-4xl font-extrabold neon-text animate-pulse">Payment Successful!</h2>
+
+    {% if item_type == "course" %}
+      <h3 class="text-2xl font-semibold text-cyan-300">You now have access to:</h3>
+      <p class="text-xl font-bold">{{ title }}</p>
+
+      <div class="flex flex-col md:flex-row justify-center gap-4 mt-4">
+        <a href="{{ material }}" target="_blank"
+           class="bg-gradient-to-r from-cyan-400 to-blue-600 hover:brightness-125 hover:scale-105 transition text-black font-semibold py-2 px-6 rounded-full shadow-[0_0_10px_#0ff]">
+          View Course PDF
+        </a>
+        <a href="{{ material }}" download
+           class="bg-gradient-to-r from-blue-500 to-indigo-700 hover:brightness-125 hover:scale-105 transition text-white font-semibold py-2 px-6 rounded-full shadow-[0_0_10px_#0ff]">
+          Download PDF
+        </a>
+      </div>
+
+    {% elif item_type == "webinar" %}
+      <h3 class="text-2xl font-semibold text-cyan-300">Webinar Registration Confirmed:</h3>
+      <p class="text-xl font-bold">{{ title }}</p>
+
+      <div class="space-y-4 mt-4">
+        <p class="text-lg">
+          Meeting Link:
+          <a href="{{ link }}" target="_blank" class="underline text-cyan-400 hover:text-cyan-300">Join Webinar</a>
+        </p>
+
+        <p class="text-lg">
+          Access Code:
+          <span class="font-mono bg-indigo-600 px-2 py-1 rounded text-white">{{ access_code }}</span>
+        </p>
+
+        <a href="{% url 'download_ticket' webinar_id %}"
+           class="inline-block mt-4 bg-gradient-to-r from-cyan-400 to-blue-600 hover:brightness-125 hover:scale-105 transition text-black font-semibold py-2 px-6 rounded-full shadow-[0_0_10px_#0ff]">
+          Download Your E-Ticket
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Return Home -->
+    <div class="mt-8">
+      <a href="/" class="text-cyan-300 hover:underline text-lg">← Return to Home</a>
+    </div>
+
+  </div>
+
+</body>
+</html>

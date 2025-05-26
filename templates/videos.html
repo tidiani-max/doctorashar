@@ -1,0 +1,94 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Doctor Ashar | Future Health Tech - Watch Videos
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     background: linear-gradient(135deg, #1f1f1f, #121212);
+   }
+   .neon-text {
+     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+   }
+   .neon-border {
+     border: 2px solid;
+     border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+   }
+  </style>
+ </head>
+ <body class="font-roboto text-white">
+  <!-- Video Categories and Search -->
+  <section class="py-16" id="videos">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Watch Our Videos</h2>
+  
+      <!-- Search and Filter -->
+      <form method="get" class="mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input name="q" value="{{ query }}" class="w-full p-2 rounded bg-gray-800 text-white" placeholder="Search video..." type="text"/>
+  
+          <select name="category" class="w-full p-2 rounded bg-gray-800 text-white">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+              <option value="{{ cat.name }}" {% if selected_category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded neon-border hover:bg-blue-700 transition">
+          Apply Filters
+        </button>
+      </form>
+  
+      <!-- Videos Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  {% for video in videos %}
+  <div class="bg-gray-800 p-4 rounded neon-border">
+
+    {% if "youtube.com" in video.video_url %}
+      {% with video.video_url|cut:"https://www.youtube.com/watch?v=" as video_id %}
+        <iframe class="w-full rounded mb-4" height="200" src="https://www.youtube.com/embed/{{ video_id }}" allowfullscreen></iframe>
+      {% endwith %}
+
+    {% elif "tiktok.com" in video.video_url %}
+      <blockquote class="tiktok-embed mb-4" cite="{{ video.video_url }}" style="max-width: 100%; min-width: 200px;">
+        <section>Loading TikTok...</section>
+      </blockquote>
+      <script async src="https://www.tiktok.com/embed.js"></script>
+
+    {% elif "instagram.com" in video.video_url %}
+      <blockquote class="instagram-media mb-4" data-instgrm-permalink="{{ video.video_url }}" data-instgrm-version="14" style="background:#FFF; border:0; margin: 1px; padding:0; width:100%;">
+      </blockquote>
+      <script async defer src="//www.instagram.com/embed.js"></script>
+
+    {% elif video.thumbnail %}
+      <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="mb-4 rounded" height="200" width="300">
+
+    {% else %}
+      <p class="text-white mb-4">No preview available.</p>
+    {% endif %}
+
+    <h3 class="text-xl font-bold mb-2">{{ video.title }}</h3>
+    <p class="mb-4 text-gray-300">{{ video.description|truncatewords:20 }}</p>
+    
+    {% if not "instagram.com" in video.video_url and not "tiktok.com" in video.video_url and not "youtube.com" in video.video_url %}
+      <a href="{{ video.video_url }}" target="_blank" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border">
+        🎬 Watch Now
+      </a>
+    {% endif %}
+  </div>
+  {% empty %}
+    <p class="text-white">No videos match your criteria.</p>
+  {% endfor %}
+</div>
+
+    </div>
+  </section>
+  
+ </body>
+</html>

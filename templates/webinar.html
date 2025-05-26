@@ -1,0 +1,144 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Doctor Ashar | Future Health Tech - Webinars
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     background: linear-gradient(135deg, #1f1f1f, #121212);
+   }
+   .neon-text {
+     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+   }
+   .neon-border {
+     border: 2px solid;
+     border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+   }
+  </style>
+ </head>
+ <body class="font-roboto text-white">
+  <!-- Webinars Section -->
+  <section class="py-16" id="webinars">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-8 neon-text">Webinars</h2>
+  
+      <!-- Real Filters -->
+      <div class="flex flex-wrap gap-4 mb-8">
+        <a href="?filter=upcoming" class="px-4 py-2 rounded font-bold neon-border 
+        {% if selected_filter == 'upcoming' %}bg-blue-500 text-white{% else %}bg-gray-700 text-gray-300{% endif %}">
+        Upcoming
+      </a>
+      
+      <a href="?filter=past" class="px-4 py-2 rounded font-bold neon-border 
+        {% if selected_filter == 'past' %}bg-green-500 text-white{% else %}bg-gray-700 text-gray-300{% endif %}">
+        Past
+      </a>
+      
+      <a href="?filter=free" class="px-4 py-2 rounded font-bold neon-border 
+        {% if selected_filter == 'free' %}bg-purple-500 text-white{% else %}bg-gray-700 text-gray-300{% endif %}">
+        Free
+      </a>
+      
+      <a href="?filter=premium" class="px-4 py-2 rounded font-bold neon-border 
+        {% if selected_filter == 'premium' %}bg-red-500 text-white{% else %}bg-gray-700 text-gray-300{% endif %}">
+        Premium
+      </a>
+      {% if not show_all %}
+      
+        <a href="?{% if selected_filter %}filter={{ selected_filter }}&{% endif %}show_all=true" 
+          class="bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-6 rounded-full">
+          View All Webinars
+        </a>
+     
+      {% endif %}
+     
+      
+      </div>
+      <!-- Show "View All" button only if limited -->
+      
+
+  
+      <!-- Webinar Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        {% for webinar in webinars %}
+        <div class="bg-gray-800 p-4 rounded neon-border relative">
+          {% if webinar.thumbnail %}
+            <img src="{{ webinar.thumbnail.url }}" alt="{{ webinar.title }}" class="mb-4 rounded" height="200" width="300">
+          {% endif %}
+          <h3 class="text-xl font-bold mb-2 text-white">{{ webinar.title }}</h3>
+          <p class="mb-2 text-sm text-gray-400">🕒 {{ webinar.date|date:"M d, Y H:i A" }}</p>
+          <p class="mb-4 text-gray-300">{{ webinar.description|truncatewords:20 }}</p>
+          <p class="text-lg font-bold mb-4 text-cyan-400">
+            {% if webinar.price == 0 %}
+              Free
+            {% else %}
+              ${{ webinar.price }}
+            {% endif %}
+          </p>
+  
+          {% if webinar.id in paid_webinars %}
+              <a class="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded neon-border" href="{% url 'webinar_view' webinar.id %}">
+                View
+              </a>
+            {% else %}
+              <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded neon-border" href="{% url 'webinar_detail' webinar.id %}">
+                Register
+              </a>
+            {% endif %}
+    
+            {% if user.is_staff %}
+              <a href="{% url 'edit_webinar' webinar_id=webinar.id %}" class="absolute top-2 right-2 bg-gradient-to-br from-cyan-400 to-blue-600 text-white px-4 py-1 rounded-full text-sm shadow hover:scale-105 transform transition">
+                ✨ Edit
+              </a>
+            {% endif %}
+          </div>
+          {% empty %}
+            <p class="text-white">No webinars match your filter.</p>
+          {% endfor %}
+      </div>
+  
+      <!-- Countdown -->
+      {% if next_webinar %}
+      <div class="mt-16 text-center">
+        <h2 class="text-3xl font-bold mb-4 neon-text">Next Live Webinar Starts In:</h2>
+        <p class="text-white text-lg mb-2">🗓 {{ next_webinar.title }} — {{ next_webinar.date|date:"M d, Y H:i A" }}</p>
+        <div class="text-2xl font-bold mb-4">
+          <span id="countdown" class="neon-text">00d 00h 00m 00s</span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+  <script>
+    const countdown = document.getElementById('countdown');
+    const targetDate = new Date("{{ next_webinar.date|date:'Y-m-d\\TH:i:s' }}").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (distance > 0) {
+        countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        countdown.innerHTML = "🎉 LIVE or Passed";
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+  
+ </body>
+</html>

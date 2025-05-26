@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ webinar.title }} - Webinar Detail</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f1f1f, #121212);
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    .neon-text {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+    }
+    .neon-border {
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+    }
+  </style>
+</head>
+<body class="text-white font-sans">
+
+  <section class="py-16 px-4 max-w-4xl mx-auto">
+    <div class="neon-border p-8 rounded-2xl shadow-2xl bg-black/50 backdrop-blur-lg relative overflow-hidden">
+
+      <!-- ✨ Floating Effect Glow -->
+      <div class="absolute -top-12 -left-12 w-36 h-36 bg-cyan-400 opacity-20 rounded-full blur-3xl z-0"></div>
+
+      {% if webinar.thumbnail %}
+        <img src="{{ webinar.thumbnail.url }}" alt="Webinar Thumbnail"
+             class="rounded-xl mb-8 shadow-lg w-full max-h-96 object-cover border border-cyan-500">
+      {% endif %}
+
+      <div class="relative z-10 space-y-6">
+
+        <!-- Title -->
+        <h1 class="text-4xl md:text-5xl font-extrabold neon-text">{{ webinar.title }}</h1>
+
+        <!-- Description -->
+        <p class="text-lg md:text-xl text-gray-300 leading-relaxed">{{ webinar.description }}</p>
+
+        <!-- Price -->
+        <p class="text-2xl font-bold">
+          {% if webinar.price == 0 %}
+            <span class="text-green-400">Free</span>
+          {% else %}
+            <span class="text-cyan-300">${{ item.price }}</span>
+          {% endif %}
+        </p>
+
+        <!-- Registration Form -->
+        <form id="unified-payment-form" class="space-y-5">
+          {% csrf_token %}
+          <input type="hidden" name="item_type" value="{{ item_type }}">
+          <input type="hidden" name="item_id" value="{{ item.id }}">
+          <input type="hidden" name="amount" value="{{ item.price }}">
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <input type="text" id="name" name="name" placeholder="Your Name" required
+              class="w-full p-3 rounded bg-gray-900 border border-cyan-500 text-white focus:ring-2 focus:ring-cyan-400">
+
+            <input type="email" id="email" name="email" placeholder="Your Email" required
+              class="w-full p-3 rounded bg-gray-900 border border-cyan-500 text-white focus:ring-2 focus:ring-cyan-400">
+          </div>
+
+          <input type="tel" id="ovo_phone" name="ovo_phone" placeholder="OVO Phone (08xx...)"
+            class="w-full p-3 rounded bg-gray-900 border border-cyan-500 text-white focus:ring-2 focus:ring-cyan-400">
+
+          <select id="payment_method" name="payment_method" required
+            class="w-full p-3 rounded bg-gray-900 text-white border border-cyan-500 focus:ring-2 focus:ring-cyan-400">
+            {% for method in payment_methods %}
+              <option value="{{ method.id }}" data-method-name="{{ method.name }}">{{ method.name }}</option>
+            {% endfor %}
+          </select>
+
+          <button type="button" id="pay-button"
+            class="w-full py-3 text-lg font-semibold rounded bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-blue-500 hover:to-cyan-500 text-black shadow-lg transition duration-300 ease-in-out hover:scale-105">
+            🔮 Pay Now
+          </button>
+          <div id="pay-loading" class="text-center mt-4 hidden text-cyan-400 text-sm animate-pulse">
+            Processing payment... please wait.
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </section>
+  <script type="text/javascript"
+        src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="{{ MIDTRANS_CLIENT_KEY }}"></script>
+
+<script>
+    const stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
+  
+   document.getElementById('pay-button').addEventListener('click', function () {
+  const payBtn = document.getElementById('pay-button');
+  const loader = document.getElementById('pay-loading');
+
+  payBtn.disabled = true;
+  loader.classList.remove('hidden');
+
+  const methodSelect = document.getElementById('payment_method');
+  const selectedOption = methodSelect.options[methodSelect.selectedIndex];
+  const methodName = selectedOption.getAttribute('data-method-name');
+
+  const itemType = document.querySelector('[name="item_type"]').value;
+  const itemId = document.querySelector('[name="item_id"]').value;
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const phone = document.getElementById('ovo_phone').value;
+
+  const restoreUI = () => {
+    payBtn.disabled = false;
+    loader.classList.add('hidden');
+  };
+
+  if (methodName === 'Stripe') {
+    fetch("{% url 'create_stripe_checkout_session' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        item_type: itemType,
+        item_id: itemId,
+        name: name,
+        email: email
+      })
+    })
+    .then(response => response.json())
+    .then(session => {
+      if (session.id) {
+        return stripe.redirectToCheckout({ sessionId: session.id });
+      } else {
+        alert("Stripe error: " + session.error);
+        restoreUI();
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Stripe error occurred.");
+      restoreUI();
+    });
+
+  } else if (['OVO', 'ShopeePay', 'GoPay', 'Bank Transfer'].includes(methodName)) {
+    fetch("{% url 'get_snap_token' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        item_type: itemType,
+        item_id: itemId
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.snap_token) {
+        window.snap.pay(data.snap_token, {
+          onSuccess: function(result) {
+            window.location.href = `/payment_success/${itemType}/${itemId}/`;
+          },
+          onPending: function(result) {
+            alert("Payment is pending.");
+          },
+          onError: function(result) {
+            alert("Snap error occurred.");
+            console.error(result);
+          },
+          onClose: function() {
+            alert("You closed the payment popup.");
+          }
+        });
+      } else {
+        alert("Snap error: " + data.error);
+      }
+      restoreUI();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Snap call failed.");
+      restoreUI();
+    });
+
+  } else {
+    alert("Unsupported payment method.");
+    restoreUI();
+  }
+});
+
+  </script>
+</body>
+</html>
+
+

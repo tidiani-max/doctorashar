@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ course.title }} - Course Detail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <section class="py-16 px-4 max-w-3xl mx-auto">
+        <div class="bg-gray-800 p-6 rounded shadow-lg">
+            <h1 class="text-3xl font-bold mb-4">{{ course.title }}</h1>
+            <p class="mb-4">{{ course.description }}</p>
+            <p class="text-xl font-semibold mb-6">Price: 
+                {% if course.price == 0 %}
+                    <span class="text-green-400">Free</span>
+                {% else %}
+                     ${{ item.price }}
+                {% endif %}
+            </p>
+    
+            <form method="post" action="{% url 'start_payment' %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="item_type" value="{{ item_type }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <input type="hidden" name="amount" value="{{ item.price }}">  <!-- or webinar -->
+
+              
+                <input type="text" name="name" placeholder="Your Name" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white" required>
+                <input type="email" name="email" placeholder="Your Email" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white" required>
+              
+                <select name="payment_method" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600" required>
+                  {% for method in payment_methods %}
+                    <option value="{{ method.id }}">{{ method.name }}</option>
+                  {% endfor %}
+                </select>
+              
+                <button type="submit" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
+                  Register & Pay
+                </button>
+              </form>
+              
+        </div>
+    </section>
+    
+
+</body>
+</html>

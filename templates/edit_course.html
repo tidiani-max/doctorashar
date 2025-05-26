@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit course  | Doctor Ashar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Toastify (optional) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f1f1f, #121212);
+    }
+    .neon-text {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff;
+    }
+    .neon-border {
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+    }
+  </style>
+</head>
+<body class="font-roboto bg-black text-white py-16 px-4">
+
+  <div class="max-w-2xl mx-auto bg-gray-900 p-8 rounded-xl neon-border shadow-xl">
+    <h1 class="text-4xl font-bold neon-text mb-6 text-center">🔮 Edit course Post</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+          
+            <!-- Course Info -->
+            <div>
+              <label class="block mb-2 text-cyan-300 font-semibold">Title</label>
+              <input type="text" name="title" value="{{ course.title }}" class="w-full px-4 py-2 rounded bg-gray-800 text-white">
+            </div>
+          
+            <div>
+              <label class="block mb-2 text-cyan-300 font-semibold">Description</label>
+              <textarea name="description" rows="4" class="w-full px-4 py-2 rounded bg-gray-800 text-white">{{ course.description }}</textarea>
+            </div>
+          
+            <div>
+              <label class="block mb-2 text-cyan-300 font-semibold">Price ($)</label>
+              <input type="number" name="price" step="0.01" value="{{ course.price }}" class="w-full px-4 py-2 rounded bg-gray-800 text-white">
+            </div>
+          
+            <div>
+              <label class="block mb-2 text-cyan-300 font-semibold">Category</label>
+              <select name="category" class="w-full px-4 py-2 rounded bg-gray-800 text-white">
+                <option value="">-- Select Category --</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if course.category and course.category.id == cat.id %}selected{% endif %}>
+                  {{ cat.name }}
+                </option>          
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block mb-2 text-cyan-300 font-semibold">Material (PDF)</label>
+              <input type="file" name="material" class="w-full bg-gray-800 text-white">
+              {% if course.material %}
+                <p class="text-sm mt-2">Current: <a href="{{ course.material.url }}" class="underline text-cyan-300">View Material</a></p>
+              {% endif %}
+            </div>
+          
+            <div>
+              <label class="block mb-2 text-cyan-300 font-semibold">Thumbnail</label>
+              <input type="file" name="thumbnail" class="w-full bg-gray-800 text-white">
+              {% if course.thumbnail %}
+                <img src="{{ course.thumbnail.url }}" class="h-20 mt-2 rounded border border-cyan-500">
+              {% endif %}
+            </div>
+          
+            <!-- Existing Chapters & Quizzes -->
+            <h2 class="text-xl font-bold text-cyan-300 mt-10">🧱 Chapters & Quizzes</h2>
+              {% for chapter in chapters %}
+              <div class="bg-gray-900 p-4 rounded mb-6">
+          <input type="hidden" name="chapter_title[]" value="{{ chapter.title }}">
+          
+          <label class="text-cyan-200 font-semibold">Chapter Title</label>
+          <input name="chapter_title[]" value="{{ chapter.title }}" class="w-full mb-2 p-2 rounded bg-gray-700 text-white" required />
+
+          <label class="text-cyan-200 font-semibold">Chapter Content</label>
+          <textarea name="chapter_content[]" class="w-full mb-2 p-2 rounded bg-gray-700 text-white" required>{{ chapter.content }}</textarea>
+
+          <label class="text-cyan-200 font-semibold">Video URL</label>
+          <input name="chapter_video[]" value="{{ chapter.video_url }}" class="w-full mb-4 p-2 rounded bg-gray-700 text-white" />
+
+          {% for quiz in chapter.quizzes.all %}
+            <div class="bg-gray-800 p-3 rounded mb-4">
+              <label class="text-cyan-300">Quiz Question</label>
+              <input name="quiz_question[]" value="{{ quiz.question }}" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+              <input name="quiz_option_a[]" value="{{ quiz.option_a }}" placeholder="Option A" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+              <input name="quiz_option_b[]" value="{{ quiz.option_b }}" placeholder="Option B" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+              <input name="quiz_option_c[]" value="{{ quiz.option_c }}" placeholder="Option C" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+              <input name="quiz_option_d[]" value="{{ quiz.option_d }}" placeholder="Option D" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+              <select name="quiz_correct[]" class="w-full p-2 bg-gray-700 text-white">
+                <option value="">Correct Answer</option>
+                <option value="A" {% if quiz.correct_answer == "A" %}selected{% endif %}>A</option>
+                <option value="B" {% if quiz.correct_answer == "B" %}selected{% endif %}>B</option>
+                <option value="C" {% if quiz.correct_answer == "C" %}selected{% endif %}>C</option>
+                <option value="D" {% if quiz.correct_answer == "D" %}selected{% endif %}>D</option>
+              </select>
+            </div>
+          {% empty %}
+            <p class="text-gray-400">No quizzes found.</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+          
+            <!-- Add New Chapter -->
+            <div id="new-chapters"></div>
+            <button type="button" onclick="addChapter()" class="bg-cyan-500 px-4 py-2 text-white rounded mt-4">+ Add New Chapter</button>
+          
+            <!-- Final Tests -->
+            <h2 class="text-xl font-bold mt-10 text-cyan-300">🏁 Final Test Questions</h2>
+            {% for test in final_tests %}
+              <div class="bg-gray-900 p-4 rounded mb-4">
+                <label class="text-white font-semibold">Question</label>
+                <input name="final_question[]" value="{{ test.question }}" class="w-full p-2 mb-2 rounded bg-gray-700 text-white" required />
+            
+                <input name="final_option_a[]" value="{{ test.option_a }}" placeholder="Option A" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+                <input name="final_option_b[]" value="{{ test.option_b }}" placeholder="Option B" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+                <input name="final_option_c[]" value="{{ test.option_c }}" placeholder="Option C" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+                <input name="final_option_d[]" value="{{ test.option_d }}" placeholder="Option D" class="w-full mb-2 p-2 bg-gray-700 text-white" required />
+            
+                <select name="final_correct[]" class="w-full p-2 bg-gray-700 text-white">
+                  <option value="">Correct Answer</option>
+                  <option value="A" {% if test.correct_answer == "A" %}selected{% endif %}>A</option>
+                  <option value="B" {% if test.correct_answer == "B" %}selected{% endif %}>B</option>
+                  <option value="C" {% if test.correct_answer == "C" %}selected{% endif %}>C</option>
+                  <option value="D" {% if test.correct_answer == "D" %}selected{% endif %}>D</option>
+                </select>
+              </div>
+            {% endfor %}
+            
+          
+            <div id="new-final-tests"></div>
+            <button type="button" onclick="addFinalTest()" class="bg-purple-600 px-4 py-2 text-white rounded mt-4">+ Add Final Question</button>
+          
+            <!-- Save -->
+            <div class="text-center mt-10">
+              <button type="submit" class="bg-gradient-to-r from-cyan-400 to-blue-600 text-black font-bold px-6 py-3 rounded-full hover:scale-105">💾 Save Changes</button>
+            </div>
+    </form>
+    <!-- Messages -->
+    {% if messages %}
+      <div class="mt-6 space-y-2">
+        {% for message in messages %}
+          <div class="bg-green-600 text-white px-4 py-2 rounded shadow">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function addChapter() {
+      const html = `
+        <div class="bg-gray-800 p-4 rounded mb-6">
+          <input name="chapter_title[]" placeholder="Chapter Title" class="w-full p-2 bg-gray-700 text-white mb-2" required />
+          <textarea name="chapter_content[]" placeholder="Chapter Content" class="w-full p-2 bg-gray-700 text-white mb-2" required></textarea>
+          <input name="chapter_video[]" placeholder="Video URL" class="w-full p-2 bg-gray-700 text-white mb-4" />
+    
+          <input name="quiz_question[]" placeholder="Quiz Question" class="w-full p-2 bg-gray-700 text-white mb-2" />
+          <input name="quiz_option_a[]" placeholder="Option A" class="w-full p-2 bg-gray-700 text-white mb-2" />
+          <input name="quiz_option_b[]" placeholder="Option B" class="w-full p-2 bg-gray-700 text-white mb-2" />
+          <input name="quiz_option_c[]" placeholder="Option C" class="w-full p-2 bg-gray-700 text-white mb-2" />
+          <input name="quiz_option_d[]" placeholder="Option D" class="w-full p-2 bg-gray-700 text-white mb-2" />
+          <select name="quiz_correct[]" class="w-full p-2 bg-gray-700 text-white">
+            <option value="">Correct Answer</option>
+            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+          </select>
+        </div>`;
+      document.getElementById("new-chapters").insertAdjacentHTML('beforeend', html);
+    }
+    
+    function addFinalTest() {
+      const html = `
+        <div class="bg-gray-800 p-4 rounded mb-6">
+          <input name="final_question[]" placeholder="Final Question" class="w-full p-2 bg-gray-700 text-white mb-2" required />
+          <input name="final_option_a[]" placeholder="Option A" class="w-full p-2 bg-gray-700 text-white mb-2" required />
+          <input name="final_option_b[]" placeholder="Option B" class="w-full p-2 bg-gray-700 text-white mb-2" required />
+          <input name="final_option_c[]" placeholder="Option C" class="w-full p-2 bg-gray-700 text-white mb-2" required />
+          <input name="final_option_d[]" placeholder="Option D" class="w-full p-2 bg-gray-700 text-white mb-2" required />
+          <select name="final_correct[]" class="w-full p-2 bg-gray-700 text-white">
+            <option value="">Correct Answer</option>
+            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+          </select>
+        </div>`;
+      document.getElementById("new-final-tests").insertAdjacentHTML('beforeend', html);
+    }
+    </script>
+</body>
+</html>

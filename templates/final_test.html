@@ -1,0 +1,66 @@
+{% load dict_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f1f1f, #121212);
+      color: white;
+      font-family: 'Roboto', sans-serif;
+    }
+    .neon-text {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0ff, 0 0 30px #0ff;
+    }
+    .neon-border {
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #0ff, #00f, #0f0) 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-6 neon-text">🧠 Final Test - {{ course.title }}</h1>
+
+    {% if completed %}
+      <p class="text-lg text-green-400 font-bold mb-4">✅ You already completed this test. Final Score: {{ score }}%</p>
+    {% endif %}
+
+    {% if not completed %}
+      <form method="POST">
+        {% csrf_token %}
+        {% for test in tests %}
+          <div class="mb-6">
+            <p class="font-semibold">{{ forloop.counter }}. {{ test.question }}</p>
+            <label><input type="radio" name="question_{{ test.id }}" value="A"> {{ test.option_a }}</label><br>
+            <label><input type="radio" name="question_{{ test.id }}" value="B"> {{ test.option_b }}</label><br>
+            <label><input type="radio" name="question_{{ test.id }}" value="C"> {{ test.option_c }}</label><br>
+            <label><input type="radio" name="question_{{ test.id }}" value="D"> {{ test.option_d }}</label>
+          </div>
+        {% endfor %}
+        <button type="submit" class="bg-green-600 hover:bg-green-800 text-white px-6 py-2 rounded font-bold">Submit Test</button>
+      </form>
+    {% endif %}
+
+    {% if completed and user_answers %}
+      <h2 class="text-2xl mt-8 mb-4 font-bold">Review Your Answers</h2>
+      {% for test in tests %}
+        <div class="mb-4 p-4 bg-gray-800 rounded">
+          <p class="mb-1 font-semibold">{{ forloop.counter }}. {{ test.question }}</p>
+          {% with user_answer=user_answers|get_item:test.id %}
+            {% if user_answer == test.correct_answer %}
+              <p class="text-green-400">✅ Your answer ({{ user_answer }}) was correct!</p>
+            {% else %}
+              <p class="text-red-400">❌ Your answer ({{ user_answer }}) was incorrect.</p>
+              <p class="text-green-300">✅ Correct answer: {{ test.correct_answer }}</p>
+            {% endif %}
+          {% endwith %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</body>
+</html>
