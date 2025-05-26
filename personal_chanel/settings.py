@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-_y*6wdtby+cpjvwql*uzlcki*azfcl^_k!ob77#xx98-+xbnif
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','doctorashar.onrender.com']
 
 
 # Application definition
@@ -167,6 +167,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'your-email@gmail.com'         # 🔁 your email here
 EMAIL_HOST_PASSWORD = 'your-app-password'        # 🔁 NOT your Gmail password!
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
 
 
 

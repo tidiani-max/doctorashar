@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: doctorashar
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn mychanel.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: mychanel.settings
+      - key: PYTHON_VERSION
+        value: 3.10
