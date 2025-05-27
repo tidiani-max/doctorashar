@@ -1142,3 +1142,9 @@ def checkout(request, item_type, pk):
         'payment_methods': payment_methods
     })
 
+
+
+
+
+
+
